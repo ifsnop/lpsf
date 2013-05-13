@@ -20,6 +20,8 @@
 function extract_field_ext2($lines, &$i, &$j, $needle, $open_tag, $close_tag, $guard, &$res, $notrim = false, $debug = false) {
 
     $found = false; $res = "";
+    if (!is_array($lines))
+	$lines = array($lines);
     
     if ($debug) { print "init extract_field_ext2:\n\ti)$i j)$j\n\tN)$needle\n\tO)$open_tag\n\tC)$close_tag\n\tG)$guard\n"; }
     for($line_ptr=$i; $line_ptr<count($lines); $line_ptr++) {
@@ -185,9 +187,10 @@ function fixDate($last_update_d) {
 
 // To convert NCR format to UTF-8, I use the following codes
 // http://stackoverflow.com/questions/1593046/how-to-convert-unicode-ncr-form-to-its-original-form-in-php
-function html_entity_decode_utf8($string) {
+function html_entity_decode_ncr2utf8($string) {
     static $trans_tbl;
 
+    $string = html_entity_decode($string, ENT_COMPAT, "UTF-8");
 
     // replace numeric entities
     $string = preg_replace('~&#x([0-9a-f]+);~ei', 'code2utf(hexdec("\\1"))', $string);

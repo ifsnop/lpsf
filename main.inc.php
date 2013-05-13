@@ -26,6 +26,7 @@ define('DIR_HOME', dirname(__FILE__));
 include_once(DIR_HOME . '/config.inc.php');
 include_once(DIR_HOME . '/header_account.inc.php');
 include_once(DIR_HOME . '/functions.inc.php');
+include_once(DIR_HOME . '/functions_db.inc.php');
 include_once(DIR_HOME . '/functions_str.inc.php');
 include_once(DIR_HOME . '/functions_web.inc.php');
 include_once(DIR_HOME . '/mod_cache.inc.php');
@@ -34,6 +35,9 @@ if (isset($_SERVER['HTTP_HOST'])) {
     define('URL_HOME', "https://" . $_SERVER['HTTP_HOST'] . "/");
     define('URLS_HOME', "https://" . $_SERVER['HTTP_HOST'] . "/");
 }
+
+$lightphpscrapperfw = array('config' => array('timer_db' => 0));
+
 
 //else
 //    define('URL_HOME', "http://devel.vipnet.ggharo.es:1080"); //"http://web01.azul.lan/3bdp");

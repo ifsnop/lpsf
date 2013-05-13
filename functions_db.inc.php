@@ -67,6 +67,56 @@ global $timer_db;
     return;
 }
 
+function executeQuery2($error_number, $dbi, $stmt, $is_zero = NULL) {
+    global $lightphpscrapperfw;
+//
+// si pasamos "isZero" o algo, devolveremos false cuando mysql_num_rows de 0.
+// si no pasamos nada, y no hay resultados, fallamos y morimos
+// 
+    if (is_null($dbi)) {
+	BUG2($error_number, "no db selected: $stmt"); die();
+    }
+    if (is_null($stmt)) {
+	BUG2($error_number, "no stmt selected"); die();
+    }
+
+    $timer_db_start = microtime(true);
+    $rs = $dbi->query($stmt);
+    $lightphpscrapperfw['config']['timer_db'] += microtime(true); - $timer_db_start;
+    if ($rs === FALSE) { // ERROR EN LA CONSULTA
+	BUG2($error_number, $stmt, $dbi); die();
+    } else {
+	if ($rs && ($rs->num_rows == 0)) { 
+	    print "HOLA" . PHP_EOL;
+	    if (is_null($is_zero)) { // esta consulta nunca deberia devolver 0
+		// return false; 
+		BUG2($error_number, "(empty resultset) " . $stmt, $dbi); die();
+		//gotoHomeIf(); exit;
+	    } else { // si no hay resultados, devuelve false
+		// return $rs;
+		return FALSE;
+	    }
+	} else {
+	    return $rs;
+	}
+    }
+    return FALSE; //not reached
+}
+
+
+function executeNonQuery2($error_number, $dbi, $stmt) {
+    global $lightphpscrapperfw;
+
+    if (is_null($dbi)) {
+	BUG2($error_number, "no db selected: $stmt"); die();
+    }
+    $timer_db_start = microtime(TRUE);
+    $rs = $dbi->query($stmt);
+    $lightphpscrapperfw['config']['timer_db'] += microtime(TRUE); - $timer_db_start;
+    if ($rs === FALSE) { BUG2($error_number, $stmt, $db); return FALSE; }
+    return TRUE;
+}
+
 function databaseConnect($user = NULL, $password = NULL, $database = NULL) {
 global $timer_db;
 

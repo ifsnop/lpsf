@@ -95,6 +95,23 @@ function BUG($error_number, $error_string, $db = NULL) {
     return $ret_html;
 }
 
+function BUG2($error_number, $error_string, $dbi = NULL) {
+    $ret_text = date("[Y-m-d H:i:s (T)]") . "${error_number}>";
+    $ret_html = "<hr />BUG2#${error_number}<br />\n";
+    
+    if (!is_null($dbi)) {
+	$ret_text .= "ERROR#" . $dbi->error . ":" . "\n>${error_string}<\n";
+	$ret_html .= "ERROR#" . $dbi->error . ":" . "<br />\n&gt;${error_string}&lt;<br />\n";
+    } else {
+	$ret_text .= "${error_string}\n";
+	$ret_html .= "ERROR : ${error_string}<br />\n";
+    }
+//    error_log(hexdump($ret_text,false,false,true), 3, DIR_HOME . "/php-error.log");
+    error_log($ret_text, 3, DIR_HOME . "/php-error.log");
+
+    return $ret_html;
+}
+
 //example
 //server.HTTP_X_FORWARDED_FOR=172.88.1.180, 194.224.177.198, 194.224.177.198
 //server.REMOTE_ADDR=194.224.177.206
