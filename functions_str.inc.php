@@ -19,7 +19,7 @@
 
 function extract_field_ext2($lines, &$i, &$j, $needle, $open_tag, $close_tag, $guard, &$res, $notrim = false, $debug = false) {
 
-    $found = false; $res = "";
+    $found = false; $res = ""; $original_i = $i; $original_j = $j;
     if (!is_array($lines))
 	$lines = array($lines);
     
@@ -29,15 +29,25 @@ function extract_field_ext2($lines, &$i, &$j, $needle, $open_tag, $close_tag, $g
 	
 	if ( (strlen($line) === FALSE) || ($j>=strlen($line)) || ($j<0) || ($needle_pos = strpos($line, $needle, $j)) === FALSE ) {
 	    if ($debug) print "next line ($line_ptr)\n";
-	    if (strpos($line, $guard)!==FALSE) { if ($debug) print "guard0\n"; return FALSE; } // guard check!
+	    if (strpos($line, $guard)!==FALSE) { if ($debug) print "guard0\n"; $i = $original_i; $j = $original_j; return FALSE; } // guard check!
 	    $j=0;
 	    continue;
 	}
 	$needle_pos += strlen($needle);
 	
 	while ( ($str_ini = strpos($line, $open_tag, $needle_pos)) === FALSE ) {
-	    if ( strpos($line, $guard)!==FALSE || ($line_ptr>=(count($lines)+1)) ) { if ($debug) print "guard1\n"; return FALSE; } // guard check!
-	    $line_ptr++; $line .= trim($lines[$line_ptr]);
+	    if ( (strpos($line, $guard)!==FALSE) || ($line_ptr >= (count($lines)/*+1*/)) ) { 
+		if ($debug) print "guard1\n"; 
+		$i = $original_i; $j = $original_j; return FALSE; 
+	    } // guard check!
+	    
+
+	    $line_ptr++; 
+	    if (!isset($lines[$line_ptr])) {
+		print "$line_ptr out of range: " . count($lines) . PHP_EOL;	    
+		print "$line" . PHP_EOL;
+		}
+	    $line .= trim($lines[$line_ptr]);
 	}
 	$str_ini += strlen($open_tag);
 	//$str_ini++;
@@ -49,12 +59,13 @@ function extract_field_ext2($lines, &$i, &$j, $needle, $open_tag, $close_tag, $g
 	while ( ($str_fin = strpos($line, $close_tag, $str_ini)) === FALSE) {
 	    if ( strpos($line, $guard, $str_ini)!==FALSE || ($line_ptr>=(count($lines)+1)) ) { 
 		if ($debug) { print "guard2 (" . strpos($line, $guard, $str_ini) . ") (${j}>=" . (count($lines)+1) . ")\n"; }
-		return FALSE; } // guard check!
+		$i = $original_i; $j = $original_j; return FALSE; } // guard check!
 	    $line_ptr++; $line .= trim($lines[$line_ptr]); 
 	}
 	if ($debug) print "2>>$line<<\n";
-	if ($str_ini===FALSE || $str_fin===FALSE || $str_fin < $str_ini) 
-	    return FALSE;
+	if ($str_ini===FALSE || $str_fin===FALSE || $str_fin < $str_ini) {
+	    $i = $original_i; $j = $original_j; return FALSE;
+	}
 
 	$str = substr($line, $str_ini, $str_fin - $str_ini);
 	if (!$notrim)
@@ -69,7 +80,7 @@ function extract_field_ext2($lines, &$i, &$j, $needle, $open_tag, $close_tag, $g
 	return TRUE;
     }
     if ($debug) { print "end extract_field_ext2: full array parsed, needle not found\n"; }
-    return FALSE;
+    $i = $original_i; $j = $original_j; return FALSE;
 }
 
 

@@ -21,7 +21,8 @@ define('ERROR_LOG', DIR_HOME . "/php-error_devel.log");
 
 function Bnumber() {
     $res = debug_backtrace();
-    return substr($res[0]['file'], strlen(DIR_HOME)) . ":" . $res[0]['line'];
+    //return substr($res[0]['file'], strlen(DIR_HOME)) . ":" . $res[0]['line']; // since lib doesn't live with code, substr won't work
+    return $res[0]['file'] . ":" . $res[0]['line'];
 }
 
 function own_error_handler($num_err, $mens_err, $nombre_archivo, $num_linea, $vars) {

@@ -18,7 +18,7 @@
 */
 
 // GENERICOS DE BBDD
-
+/*
 function executeQuery($error_number, $db, $stmt, $is_zero = NULL) {
 global $timer_db;
 //
@@ -66,6 +66,26 @@ global $timer_db;
 
     return;
 }
+*/
+function executeInsert2($error_number, $dbi, $table, $my_arr) {
+    global $lightphpscrapperfw;
+
+    if (is_null($error_number) || is_null($dbi) || is_null($table) || !is_array($my_arr)) {
+	BUG2($error_number, "missing statments error_number($error_number), dbi, table($table), my_arr"); 
+	die("missing statments error_number($error_number), dbi, table($table), my_arr" . PHP_EOL); 
+    }
+
+    $timer_db_start = microtime(TRUE);
+    $sql = array();
+    foreach($my_arr as $key => $value){
+	$sql[] = ($value=="now()" || is_numeric($value)) ? "`$key` = $value" : "`$key` = '" . $dbi->real_escape_string($value) . "'"; 
+    }
+    $sqlclause = implode(",",$sql);
+    $stmt =  "INSERT INTO `$table` SET $sqlclause";
+    $lightphpscrapperfw['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
+
+    return executeNonQuery2($error_number, $dbi, $stmt);
+}
 
 function executeQuery2($error_number, $dbi, $stmt, $is_zero = NULL) {
     global $lightphpscrapperfw;
@@ -80,14 +100,13 @@ function executeQuery2($error_number, $dbi, $stmt, $is_zero = NULL) {
 	BUG2($error_number, "no stmt selected"); die();
     }
 
-    $timer_db_start = microtime(true);
+    $timer_db_start = microtime(TRUE);
     $rs = $dbi->query($stmt);
-    $lightphpscrapperfw['config']['timer_db'] += microtime(true); - $timer_db_start;
+    $lightphpscrapperfw['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
     if ($rs === FALSE) { // ERROR EN LA CONSULTA
-	BUG2($error_number, $stmt, $dbi); die();
+	BUG2($error_number, $stmt, $dbi); die($error_number . "error en la consula stmt($stmt)" . PHP_EOL);
     } else {
 	if ($rs && ($rs->num_rows == 0)) { 
-	    print "HOLA" . PHP_EOL;
 	    if (is_null($is_zero)) { // esta consulta nunca deberia devolver 0
 		// return false; 
 		BUG2($error_number, "(empty resultset) " . $stmt, $dbi); die();
@@ -107,13 +126,10 @@ function executeQuery2($error_number, $dbi, $stmt, $is_zero = NULL) {
 function executeNonQuery2($error_number, $dbi, $stmt) {
     global $lightphpscrapperfw;
 
-    if (is_null($dbi)) {
-	BUG2($error_number, "no db selected: $stmt"); die();
-    }
     $timer_db_start = microtime(TRUE);
     $rs = $dbi->query($stmt);
-    $lightphpscrapperfw['config']['timer_db'] += microtime(TRUE); - $timer_db_start;
-    if ($rs === FALSE) { BUG2($error_number, $stmt, $db); return FALSE; }
+    $lightphpscrapperfw['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
+    if ($rs === FALSE) { BUG2($error_number, $stmt, $dbi); return FALSE; }
     return TRUE;
 }
 
