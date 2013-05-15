@@ -131,7 +131,6 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
 	$cache_hash = hash("sha256", $url . serialize($data) . $strip_crlf . $split_crlf);
 	$cache_hash = str_pad(dec2string(string2dec($cache_hash, 16), 62), 43, '0', STR_PAD_LEFT);
 	if (($from_cache = isCacheReady($cache_path, $cache_prefix, $cache_hash, 86400*365, $content)) === TRUE) {
-	    print_r($lpsf['errors']);
 	    return true;
 	}
     }
