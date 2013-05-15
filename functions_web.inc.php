@@ -122,8 +122,7 @@ function parseUrl($url) {
 }
 
 function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf = false, $data = array(), $cache = true, $debug = false, &$from_cache) {
-    $from_cache = 0;
-
+    global $lpsf;
 
     if ($cache) {
 	$cache_content = "";
@@ -131,8 +130,8 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
 	$cache_prefix = "curl";
 	$cache_hash = hash("sha256", $url . serialize($data) . $strip_crlf . $split_crlf);
 	$cache_hash = str_pad(dec2string(string2dec($cache_hash, 16), 62), 43, '0', STR_PAD_LEFT);
-	if (isCacheReady($cache_path, $cache_prefix, $cache_hash, 86400*7*10, $content)) {
-	    $fromcache = true;
+	if (($from_cache = isCacheReady($cache_path, $cache_prefix, $cache_hash, 86400*365, $content)) === TRUE) {
+	    print_r($lpsf['errors']);
 	    return true;
 	}
     }

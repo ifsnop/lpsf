@@ -67,12 +67,12 @@ global $timer_db;
     return;
 }
 */
-function executeInsert2($error_number, $dbi, $table, $my_arr) {
-    global $lightphpscrapperfw;
+function executeInsert2($where, $dbi, $table, $my_arr) {
+    global $lpsf;
 
-    if (is_null($error_number) || is_null($dbi) || is_null($table) || !is_array($my_arr)) {
-	BUG2($error_number, "missing statments error_number($error_number), dbi, table($table), my_arr"); 
-	die("missing statments error_number($error_number), dbi, table($table), my_arr" . PHP_EOL); 
+    if (is_null($where) || is_null($dbi) || is_null($table) || !is_array($my_arr)) {
+	BUG2($where, "missing statments where($where), dbi, table($table), my_arr"); 
+	die("missing statments where($where), dbi, table($table), my_arr" . PHP_EOL); 
     }
 
     $timer_db_start = microtime(TRUE);
@@ -82,34 +82,34 @@ function executeInsert2($error_number, $dbi, $table, $my_arr) {
     }
     $sqlclause = implode(",",$sql);
     $stmt =  "INSERT INTO `$table` SET $sqlclause";
-    $lightphpscrapperfw['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
+    $lpsf['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
 
-    return executeNonQuery2($error_number, $dbi, $stmt);
+    return executeNonQuery2($where, $dbi, $stmt);
 }
 
-function executeQuery2($error_number, $dbi, $stmt, $is_zero = NULL) {
-    global $lightphpscrapperfw;
+function executeQuery2($where, $dbi, $stmt, $is_zero = NULL) {
+    global $lpsf;
 //
 // si pasamos "isZero" o algo, devolveremos false cuando mysql_num_rows de 0.
 // si no pasamos nada, y no hay resultados, fallamos y morimos
 // 
     if (is_null($dbi)) {
-	BUG2($error_number, "no db selected: $stmt"); die();
+	BUG2($where, "no db selected: $stmt"); die();
     }
     if (is_null($stmt)) {
-	BUG2($error_number, "no stmt selected"); die();
+	BUG2($where, "no stmt selected"); die();
     }
 
     $timer_db_start = microtime(TRUE);
     $rs = $dbi->query($stmt);
-    $lightphpscrapperfw['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
+    $lpsf['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
     if ($rs === FALSE) { // ERROR EN LA CONSULTA
-	BUG2($error_number, $stmt, $dbi); die($error_number . "error en la consula stmt($stmt)" . PHP_EOL);
+	BUG2($where, $stmt, $dbi); die($where . "error en la consula stmt($stmt)" . PHP_EOL);
     } else {
 	if ($rs && ($rs->num_rows == 0)) { 
 	    if (is_null($is_zero)) { // esta consulta nunca deberia devolver 0
 		// return false; 
-		BUG2($error_number, "(empty resultset) " . $stmt, $dbi); die();
+		BUG2($where, "(empty resultset) " . $stmt, $dbi); die();
 		//gotoHomeIf(); exit;
 	    } else { // si no hay resultados, devuelve false
 		// return $rs;
@@ -123,13 +123,13 @@ function executeQuery2($error_number, $dbi, $stmt, $is_zero = NULL) {
 }
 
 
-function executeNonQuery2($error_number, $dbi, $stmt) {
-    global $lightphpscrapperfw;
+function executeNonQuery2($where, $dbi, $stmt) {
+    global $lpsf;
 
     $timer_db_start = microtime(TRUE);
     $rs = $dbi->query($stmt);
-    $lightphpscrapperfw['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
-    if ($rs === FALSE) { BUG2($error_number, $stmt, $dbi); return FALSE; }
+    $lpsf['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
+    if ($rs === FALSE) { BUG2($where, $stmt, $dbi); return FALSE; }
     return TRUE;
 }
 

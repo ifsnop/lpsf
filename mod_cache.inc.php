@@ -18,11 +18,11 @@
 */
 
 $cache_content = "";
-define("CACHE_TIMEOUT", 86400*7*10);
+define("CACHE_TIMEOUT", 86400*365);
 if (!isset($errors)) $errors = array();
 
 function isCacheReady($cache_path = "./cache/", $cache_prefix = "", $cache_hash = "", $cache_timeout = CACHE_TIMEOUT, &$cache_content) {
-    global $errors;
+    global $lpsf;
     
     $cache_content = "";
     if (substr($cache_path,-1) != "/") {
@@ -33,7 +33,7 @@ function isCacheReady($cache_path = "./cache/", $cache_prefix = "", $cache_hash 
     
     if (!is_dir($cache_path_cmp)) {
 	if (mkdir($cache_path_cmp, 0755, true) === false) {
-	    $errors[] = "$cache_file => status: *error* can't create path (mkdir error)";
+	    lpsf_log(Bnumber(), "$cache_file => status: *error* can't create path (mkdir error)");
 	    return false;
 	}
     }
@@ -41,11 +41,11 @@ function isCacheReady($cache_path = "./cache/", $cache_prefix = "", $cache_hash 
 	$cache_diff = time() - filemtime($cache_file);
 	if ( $cache_diff <= $cache_timeout ) {
 	    if ( ($cache_content = file_get_contents($cache_file)) === false ) {
-		$errors[] = "$cache_file => status: *miss* invalidated cache (file_get_contents error)";
+		lpsf_log(Bnumber(), "$cache_file => status: *miss* invalidated cache (file_get_contents error)");
 		return false;
 	    } else {
 		$cache_timestamp = date ("Y/m/d H:i:s T", filemtime($cache_file));
-		$errors[] = "$cache_file => status: *hit* [$cache_timestamp]";
+		lpsf_log(Bnumber(),"$cache_file => status: *hit* [$cache_timestamp]");
 		$cache_content = unserialize($cache_content);
 		return true;
 	    }	
@@ -54,11 +54,11 @@ function isCacheReady($cache_path = "./cache/", $cache_prefix = "", $cache_hash 
 	} else {
 	    // use delete cache
 	    if (unlink($cache_file)) {
-		$errors[] =  "$cache_file => status: *force_delete*";
+		lpsf_log(Bnumber(), "$cache_file => status: *force_delete*");
 	    }
 	}
     }
-    $errors[] = "$cache_file => status: *miss*";
+    lpsf_log(Bnumber(), "$cache_file => status: *miss*");
     return false;
 }
 
@@ -73,7 +73,7 @@ function fillCache($cache_path = "./cache/", $cache_prefix = "", $cache_hash = "
 
     if (!is_dir($cache_path_cmp)) {
 	if (mkdir($cache_path_cmp, 0755, true) === false) {
-	    $errors[] = "$cache_file => status: *error* can't create path (mkdir error)";
+	    lpsf_log(Bnumber(), "$cache_file => status: *error* can't create path (mkdir error)");
 	    return false;
 	}
     }
@@ -85,7 +85,7 @@ function fillCache($cache_path = "./cache/", $cache_prefix = "", $cache_hash = "
 	if ( fwrite($fp, serialize($cache_content)) === false ) {
 	    fclose($fp);
 	    unlink($cache_file);
-	    $errors[] = "$cache_file => status: *error* can't write cache file (fwrite error)";
+	    lpsf_log(Bnumber(), "$cache_file => status: *error* can't write cache file (fwrite error)");
 	    return false;
 	}
 	fclose($fp);

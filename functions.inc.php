@@ -615,3 +615,35 @@ function hexdump ($data, $htmloutput = true, $uppercase = false, $return = false
     }
 }
 
+
+function insert_at_top(&$my_arr, $elem, $count = 10) {
+    if(!is_array($my_arr) || is_null($elem)) 
+	return false;
+    array_splice($my_arr, $count-1);
+    array_unshift($my_arr, $elem); 	// Shift every element down one, and insert new at top
+    return true;
+}
+
+function test_insert_at_top() {
+
+    $test_arr = array('a','b','c','d');
+    $test_arr_result = array(99,98,97,96,95,94,93,92,91,90);
+    for($i=0;$i<100; $i++) {
+	insert_at_top($test_arr, $i, 10);
+    }
+                 
+    print_r($test_arr);
+    print_r($test_arr_result);
+        
+    assert_options(ASSERT_ACTIVE, 1);
+    assert_options(ASSERT_WARNING, 0);
+    assert_options(ASSERT_QUIET_EVAL, 1);
+    
+    // Create a handler function
+    function my_assert_handler($file, $line, $code) {
+	print "Assertion Failed: file($file) line($line) code(test_insert_at_top)" . PHP_EOL;
+    }
+    assert_options(ASSERT_CALLBACK, 'my_assert_handler');
+    assert($test_arr == $test_arr_result);
+}
+// test_insert_at_top();
