@@ -26,6 +26,7 @@ function extract_field_ext2($lines, &$i, &$j, $needle, $open_tag, $close_tag, $g
     if ($debug) { print "init extract_field_ext2:\n\ti)$i j)$j\n\tN)$needle\n\tO)$open_tag\n\tC)$close_tag\n\tG)$guard\n"; }
     for($line_ptr=$i; $line_ptr<count($lines); $line_ptr++) {
 	$line = trim($lines[$line_ptr]);
+	$last_concat_line_length = strlen(trim($lines[$line_ptr]));
 	
 	if ( (strlen($line) === FALSE) || ($j>=strlen($line)) || ($j<0) || ($needle_pos = strpos($line, $needle, $j)) === FALSE ) {
 	    if ($debug) print "next line ($line_ptr)\n";
@@ -48,6 +49,8 @@ function extract_field_ext2($lines, &$i, &$j, $needle, $open_tag, $close_tag, $g
 		print "$line" . PHP_EOL;
 		}
 	    $line .= trim($lines[$line_ptr]);
+	    $last_concat_line_length += strlen(trim($lines[$line_ptr]));
+	
 	}
 	$str_ini += strlen($open_tag);
 	//$str_ini++;
@@ -61,6 +64,7 @@ function extract_field_ext2($lines, &$i, &$j, $needle, $open_tag, $close_tag, $g
 		if ($debug) { print "guard2 (" . strpos($line, $guard, $str_ini) . ") (${j}>=" . (count($lines)+1) . ")\n"; }
 		$i = $original_i; $j = $original_j; return FALSE; } // guard check!
 	    $line_ptr++; $line .= trim($lines[$line_ptr]); 
+	    $last_concat_line_length += strlen($lines[$line_ptr]);
 	}
 	if ($debug) print "2>>$line<<\n";
 	if ($str_ini===FALSE || $str_fin===FALSE || $str_fin < $str_ini) {
@@ -74,7 +78,10 @@ function extract_field_ext2($lines, &$i, &$j, $needle, $open_tag, $close_tag, $g
 	$res = $str;
 	$found = true;
 	$i = $line_ptr;
-	$j = $str_fin;
+	$last_concat_line_length -= strlen($lines[$line_ptr]);
+	//$j = $str_fin; // position relative to concatenated strings, lets fix it.
+	$j = $str_fin - $last_concat_line_length;	
+	
 	if ($debug) print "i)$i\n";
 	if ($debug) print "3>>$res<<\n";
 	return TRUE;
