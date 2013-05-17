@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-$lpsf = array(                                                                                                                                                                                               
-    'config' => array('timer_db' => 0, 'errors_count' => 5),                                                                                                                                                 
-    'errors' => array()                                                                                                                                                                                      
-); 
+$lpsf = array(
+    'config' => array('timer_db' => 0, 'errors_count' => 100),
+    'errors' => array()
+);
