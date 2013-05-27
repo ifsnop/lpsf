@@ -18,6 +18,15 @@
 */
 
 $lpsf = array(
-    'config' => array('timer_db' => 0, 'errors_count' => 100),
+    'config' => array(
+			'timer_db' => 0, 
+			'errors_count' => 100,
+			'db' => array(
+			    'host' => 'localhost',
+			    'user' => 'user',
+			    'pass' => 'pass',
+			    'db' => 'database'
+			),
+    ),
     'errors' => array()
 );

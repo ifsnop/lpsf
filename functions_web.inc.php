@@ -20,7 +20,7 @@
 include_once(dirname(__FILE__) . '/main.inc.php');
 include_once(DIR_HOME . '/header_account.inc.php');
 include_once(DIR_HOME . '/functions.inc.php');
-include_once(DIR_HOME . '/external/forceutf8/src/ForceUTF8/Encoding.php');
+include_once(DIR_HOME . '/../external/forceutf8/src/ForceUTF8/Encoding.php');
 
 define('BIN_PATH', "/usr/bin");
 

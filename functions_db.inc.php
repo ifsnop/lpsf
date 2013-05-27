@@ -19,6 +19,32 @@
 
 // GENERICOS DE BBDD
 /*
+function databaseConnect($user = NULL, $password = NULL, $database = NULL) {
+global $timer_db;
+
+    if (is_null($user) || is_null($password) || is_null($database)) {
+	$user = 'dbuser'; $password = 'dbpass'; $database = 'dbdb';
+    }
+
+    $timer_db_start = microtime(true);
+    if ( ($db = mysql_connect('mysql01.azul.lan', $user, $password)) === false ) { 
+	BUG(Bnumber(), "mysql_connect"); die();
+    }
+    if ( (mysql_select_db($database, $db)) === false ) { BUG(Bnumber(), "mysql_select_db", $db); die(); }
+//    mysql_query("SET SESSION character_set_results = 'UTF8'");
+//    mysql_query("SET CHARACTER SET utf8");
+
+    $stmt = "SET NAMES utf8";
+    if (mysql_query($stmt, $db) === false) { BUG(Bnumber(), $stmt, $db); die(); }
+    $stmt = "SET collation_connection = 'utf8_spanish_ci'";
+    if (mysql_query($stmt, $db) === false) { BUG(Bnumber(), $stmt, $db); die(); }
+
+    $timer_db_stop = microtime(true);
+    $timer_db += $timer_db_stop - $timer_db_start;
+
+    return $db;
+}
+
 function executeQuery($error_number, $db, $stmt, $is_zero = NULL) {
 global $timer_db;
 //
@@ -67,6 +93,7 @@ global $timer_db;
     return;
 }
 */
+
 function executeInsert2($where, $dbi, $table, $my_arr) {
     global $lpsf;
 
@@ -133,30 +160,34 @@ function executeNonQuery2($where, $dbi, $stmt) {
     return TRUE;
 }
 
-function databaseConnect($user = NULL, $password = NULL, $database = NULL) {
-global $timer_db;
+function databaseConnect2() {
+    global $lpsf;
 
-    if (is_null($user) || is_null($password) || is_null($database)) {
-	$user = 'dbuser'; $password = 'dbpass'; $database = 'dbdb';
+    $timer_db_start = microtime(TRUE);
+
+    $dbi = new mysqli($lpsf['config']['db']['host'], 
+        $lpsf['config']['db']['user'],
+	$lpsf['config']['db']['pass'],
+	$lpsf['config']['db']['db']);
+    if ($dbi->connect_error) {
+	BUG(Bnumber(), "new mysqli", $dbi);
+	die("error mysqli (" . $dbi->connect_errno . ") " . $dbi->connect_error);
     }
+    $dbi->set_charset('utf8');
+    $dbi->query("SET NAMES 'utf8'");
+    $dbi->query("SET collation_connection = 'utf8_spanish_ci'");
+    
+//    if ( (mysql_select_db($db, $dbc)) === false ) { BUG(Bnumber(), "mysql_select_db", $dbc); die(); }
+//    mysql_query("SET SESSION character_set_results = 'UTF8'"); mysql_query("SET CHARACTER SET utf8");
 
-    $timer_db_start = microtime(true);
-    if ( ($db = mysql_connect('mysql01.azul.lan', $user, $password)) === false ) { 
-	BUG(Bnumber(), "mysql_connect"); die();
-    }
-    if ( (mysql_select_db($database, $db)) === false ) { BUG(Bnumber(), "mysql_select_db", $db); die(); }
-//    mysql_query("SET SESSION character_set_results = 'UTF8'");
-//    mysql_query("SET CHARACTER SET utf8");
+//    $stmt = "SET NAMES utf8";
+//    if (mysql_query($stmt, $dbc) === false) { BUG(Bnumber(), $stmt, $dbc); die(); }
+//    $stmt = "SET collation_connection = 'utf8_spanish_ci'";
+//    if (mysql_query($stmt, $dbc) === false) { BUG(Bnumber(), $stmt, $dbc); die(); }
 
-    $stmt = "SET NAMES utf8";
-    if (mysql_query($stmt, $db) === false) { BUG(Bnumber(), $stmt, $db); die(); }
-    $stmt = "SET collation_connection = 'utf8_spanish_ci'";
-    if (mysql_query($stmt, $db) === false) { BUG(Bnumber(), $stmt, $db); die(); }
+    $lpsf['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
 
-    $timer_db_stop = microtime(true);
-    $timer_db += $timer_db_stop - $timer_db_start;
-
-    return $db;
+    return $dbi;
 }
 
 // ESPECIFICOS DE 3BDP
