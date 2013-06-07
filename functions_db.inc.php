@@ -114,7 +114,7 @@ function executeInsert2($where, $dbi, $table, $my_arr) {
     return executeNonQuery2($where, $dbi, $stmt);
 }
 
-function executeQuery2($where, $dbi, $stmt, $is_zero = NULL) {
+function executeQuery2($where, $dbi, $stmt, $canBeZero = NULL) {
     global $lpsf;
 //
 // si pasamos "isZero" o algo, devolveremos false cuando mysql_num_rows de 0.
@@ -134,7 +134,7 @@ function executeQuery2($where, $dbi, $stmt, $is_zero = NULL) {
 	BUG2($where, $stmt, $dbi); die($where . "error en la consula stmt($stmt)" . PHP_EOL);
     } else {
 	if ($rs && ($rs->num_rows == 0)) { 
-	    if (is_null($is_zero)) { // esta consulta nunca deberia devolver 0
+	    if (is_null($canBeZero)) { // esta consulta nunca deberia devolver 0
 		// return false; 
 		BUG2($where, "(empty resultset) " . $stmt, $dbi); die();
 		//gotoHomeIf(); exit;
