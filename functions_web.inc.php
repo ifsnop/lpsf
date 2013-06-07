@@ -174,6 +174,9 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
 
     //$content = ForceUTF8\Encoding::toUTF8($content);
 
+    if ( 0 == strlen($content) )
+	return false;
+
     if ($split_crlf) { // result becomes array
         $content = preg_split("/[\r\n|\n\r|\n]/", $content, NULL, PREG_SPLIT_NO_EMPTY);
     } 
@@ -182,10 +185,12 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
     }
     if (!is_array($content)) $content = array($content);
 
-    if ($err==0) {
+    if ( $err == 0 ) {
         if ($cache) {
 	    fillCache($cache_path, $cache_prefix, $cache_hash, $content);
 	}
+    } else {
+	return false;
     }
     
     return true;
