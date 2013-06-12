@@ -646,4 +646,62 @@ function test_insert_at_top() {
     assert_options(ASSERT_CALLBACK, 'my_assert_handler');
     assert($test_arr == $test_arr_result);
 }
-// test_insert_at_top();
+//test_insert_at_top();
+
+/**
+ * Compare two arrays.
+ *
+ * Returns true if both arrays have the same elements,
+ * false otherwise or if one parameter is not an array.
+ *
+ * @version     20130612232800
+ * @author      Diego Torres <diego.torres@gmail.com>
+ * @link        https://github.com/rapid2k1/lpsf
+ * @param       array	$a	First array to compere
+ * @param       array	$b	Second array to compare
+ * @return	bool		True if equal, false if not
+ */
+
+function array_compare($a, $b) 
+{
+    if ( !is_array($a) || !is_array($b) ) {
+	return false;
+    }
+    
+    $merge = array_merge( array_diff($a, $b), array_diff($b, $a) );
+    
+    if (0 == count($merge) )
+	return true;
+    else
+	return false;
+    
+}
+
+function test_array_compare()
+{
+    $test_cases = array(
+	array( 'a' => array('a', 'b', 'c'), 'b' => array('a', 'b', 'c'), 'res' => true ),
+	array( 'a' => array('a', 'b'), 'b' => array('a', 'b', 'c'), 'res' => false ),
+	array( 'a' => array('a', 'b', 'c'), 'b' => array('a', 'b'), 'res' => false ),
+	array( 'a' => 'a', 'b' => array('a', 'b', 'c'), 'res' => false ),
+    );
+    
+    assert_options(ASSERT_ACTIVE, 1);
+    assert_options(ASSERT_WARNING, 0);
+    assert_options(ASSERT_QUIET_EVAL, 1);
+    
+    // Create a handler function
+    function my_assert_handler($file, $line, $code) {
+	print "Assertion Failed: file($file) line($line) code(test_array_compare)" . PHP_EOL;
+    }
+    assert_options(ASSERT_CALLBACK, 'my_assert_handler');
+    assert($test_arr == $test_arr_result);
+
+    foreach( $test_cases as $test_case ) {
+        $res = array_compare( $test_case['a'], $test_case['b'] );
+        assert( $res == $test_case['res'] );
+    }
+}
+
+//test_array_compare();
+
