@@ -2,7 +2,7 @@
 /*
     Light PHP scrapper framework. Several php utilities to scrap sites.
     Copyright (C) 2013 Diego Torres <diego dot torres at gmail dot com>
-    
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -98,16 +98,16 @@ function executeInsert2($where, $dbi, $table, $my_arr) {
     global $lpsf;
 
     if (is_null($where) || is_null($dbi) || is_null($table) || !is_array($my_arr)) {
-	BUG2($where, "missing statments where($where), dbi, table($table), my_arr"); 
-	die("missing statments where($where), dbi, table($table), my_arr" . PHP_EOL); 
+        BUG2($where, "missing statments where($where), dbi, table($table), my_arr");
+        die("missing statments where($where), dbi, table($table), my_arr" . PHP_EOL);
     }
 
     $timer_db_start = microtime(TRUE);
     $sql = array();
     foreach($my_arr as $key => $value){
-	$sql[] = ($value=="now()" || is_numeric($value)) ? "`$key` = $value" : "`$key` = '" . $dbi->real_escape_string($value) . "'"; 
+        $sql[] = ($value=="now()" || is_numeric($value)) ? "`$key` = $value" : "`$key` = '" . $dbi->real_escape_string($value) . "'"; 
     }
-    $sqlclause = implode(",",$sql);
+    $sqlclause = implode(",", $sql);
     $stmt =  "INSERT INTO `$table` SET $sqlclause";
     $lpsf['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
 
@@ -119,24 +119,24 @@ function executeQuery2($where, $dbi, $stmt, $canBeZero = NULL) {
 //
 // si pasamos "isZero" o algo, devolveremos false cuando mysql_num_rows de 0.
 // si no pasamos nada, y no hay resultados, fallamos y morimos
-// 
+//
     if (is_null($dbi)) {
-	BUG2($where, "no db selected: $stmt"); die();
+        BUG2($where, "no db selected: $stmt"); die();
     }
     if (is_null($stmt)) {
-	BUG2($where, "no stmt selected"); die();
+        BUG2($where, "no stmt selected"); die();
     }
 
     $timer_db_start = microtime(TRUE);
     $rs = $dbi->query($stmt);
     $lpsf['config']['timer_db'] += microtime(TRUE) - $timer_db_start;
     if ($rs === FALSE) { // ERROR EN LA CONSULTA
-	BUG2($where, $stmt, $dbi); die($where . "error en la consula stmt($stmt)" . PHP_EOL);
+        BUG2($where, $stmt, $dbi); die($where . " error en la consula stmt($stmt)" . PHP_EOL);
     } else {
-	if ($rs && ($rs->num_rows == 0)) { 
+        if ($rs && ($rs->num_rows == 0)) {
 	    if (is_null($canBeZero)) { // esta consulta nunca deberia devolver 0
 		// return false; 
-		BUG2($where, "(empty resultset) " . $stmt, $dbi); die();
+		BUG2($where, "(empty resultset) " . $stmt, $dbi); die("(empty resultset) " . $stmt . PHP_EOL);
 		//gotoHomeIf(); exit;
 	    } else { // si no hay resultados, devuelve false
 		// return $rs;
