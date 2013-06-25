@@ -121,6 +121,33 @@ function parseUrl($url) {
     return $parseUrl;
 }
 
+/**
+ * Extract domain.tld from url (easy way).
+ *
+ * Only strlen(domain)>2 is a valid domain. (co.uk is not)
+ * If not, then choose next domain (daemon.co.uk)
+ * If www.20minutos.es, return 20minutos.es
+ *
+ * @version     20130625190001
+ * @author      Diego Torres <diego.torres@gmail.com>
+ * @link        https://github.com/rapid2k1/lpsf
+ * @param       string $url     url to extract domain.tld from
+ * @return      bool            first valid domain+tld
+ */
+function extractDomain($url) {
+    $pu = parseUrl($url);
+    $parts = explode( '.', $pu['host'] );
+    //$slice = ( strlen( reset( array_slice( $parts, -2, 1 ) ) ) == 2 ) && ( count( $parts ) > 2 ) ? 3 : 2;
+    //$short_url = implode( '.', array_slice( $parts, ( 0 - $slice ), $slice ) );
+    //print $pu['host'] . PHP_EOL;
+
+    $subdomain = array_slice( $parts, -2, 1 );
+    $slice = ( 2 == strlen($subdomain[0]) ) && ( count($parts) > 2 ) ? 3 : 2;
+    // print $slice . PHP_EOL;
+    $subdomain = implode( '.', array_slice( $parts, ( 0 - $slice ), $slice ) );
+    return $subdomain;
+}
+
 function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf = false, $data = array(), $cache = true, $debug = false, &$from_cache) {
     global $lpsf;
 
