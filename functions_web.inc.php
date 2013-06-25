@@ -134,9 +134,12 @@ function parseUrl($url) {
  * @param       string $url     url to extract domain.tld from
  * @return      bool            first valid domain+tld
  */
-function extractDomain($url) {
-    $pu = parseUrl($url);
-    $parts = explode( '.', $pu['host'] );
+function extractDomain($url) 
+{
+    $parsedUrl = parseUrl($url);
+
+    $parts = explode( '.', $parsedUrl['host'] );
+
     //$slice = ( strlen( reset( array_slice( $parts, -2, 1 ) ) ) == 2 ) && ( count( $parts ) > 2 ) ? 3 : 2;
     //$short_url = implode( '.', array_slice( $parts, ( 0 - $slice ), $slice ) );
     //print $pu['host'] . PHP_EOL;
