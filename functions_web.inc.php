@@ -2,7 +2,7 @@
 /*
     Light PHP scrapper framework. Several php utilities to scrap sites.
     Copyright (C) 2013 Diego Torres <diego dot torres at gmail dot com>
-    
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -40,11 +40,11 @@ function get_user_agent() {
     "Opera/5.12 (Windows 98; U) [es]");
     //$user_agent = $user_agent_array[rand(0,count($user_agent_array)-1)];
     $user_agent = $user_agent_array[0];
-    
+
     return $user_agent;
 }
 
-/*    
+/*
     case "ISO88591":
 	$cmd = BIN_PATH . "/iconv -c -f ISO-8859-1 -t UTF-8 \"$return_file\" > \"$return_file2\" 2> /dev/null";
 	$ret = system($cmd, $retCode);
@@ -77,7 +77,7 @@ function br2nl($string) {
 }
 function is_good_post($str) {
     if (!is_null($str) && str_word_count_utf8($str)>=15) {
-	return true;
+        return true;
     }
 }
 function clean_web_input($str) {
@@ -88,7 +88,12 @@ function links_web_input($str) {
     $ret=$res="";$i=$k=0;
     if (!is_array($str)) { $str = array($str); }
     while ( ($rc = extract_field_ext2($str, $i, $k, "<a href=", "\"", "\"", "palopero", $res, false,false)) !== FALSE) {
-	$ret .= $res . "\n";
+        $idx = strpos($res, "url=", 0);
+        if ( $idx ) {
+            $ret .= substr($res, $idx+4) . "\n";
+        } else {
+            $ret .= $res . "\n";
+        }
     }
     return $ret;
 }
@@ -97,10 +102,10 @@ function links_web_input($str) {
 function to7bit($text,$from_enc) {
     $text = mb_convert_encoding($text,'HTML-ENTITIES',$from_enc);
     $text = preg_replace(
-	array('/&szlig;/','/&(..)lig;/',
-	'/&([aouAOU])uml;/','/&(.)[^;]*;/'),
-	array('ss',"$1","$1".'e',"$1"),
-	$text);
+        array('/&szlig;/','/&(..)lig;/',
+        '/&([aouAOU])uml;/','/&(.)[^;]*;/'),
+        array('ss',"$1","$1".'e',"$1"),
+        $text);
     $text = iconv("UTF-8", "ASCII//TRANSLIT", $text);
     return $text;
 }
@@ -110,12 +115,12 @@ function stripNonUTF8($str) {
 }
 
 function parseUrl($url) {
-    $parseUrl = parse_url(trim($url));
-    if ($parseUrl===FALSE) return FALSE;
-    if ($parseUrl['host']=="") {
+    if ( ($parseUrl = parse_url(trim($url))) === false )
+        return false;
+    if ( !isset($parseUrl['host']) || ($parseUrl['host'] == "") ) {
         $parseUrl['host'] = array_shift(explode('/', $parseUrl['path'], 2));
-	list($nada, $parseUrl['path']) = (explode('/', $parseUrl['path'], 2));
-    	$parseUrl['path'] = '/' . $parseUrl['path'];
+        list($nada, $parseUrl['path']) = (explode('/', $parseUrl['path'], 2));
+        $parseUrl['path'] = '/' . $parseUrl['path'];
         $parseUrl['scheme'] = "http";
     }
     return $parseUrl;
@@ -155,14 +160,14 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
     global $lpsf;
 
     if ($cache) {
-	$cache_content = "";
-	$cache_path = "./cache/";
-	$cache_prefix = "curl";
-	$cache_hash = hash("sha256", $url . serialize($data) . $strip_crlf . $split_crlf);
-	$cache_hash = str_pad(dec2string(string2dec($cache_hash, 16), 62), 43, '0', STR_PAD_LEFT);
-	if (($from_cache = isCacheReady($cache_path, $cache_prefix, $cache_hash, 86400*365, $content)) === TRUE) {
-	    return true;
-	}
+        $cache_content = "";
+        $cache_path = "./cache/";
+        $cache_prefix = "curl";
+        $cache_hash = hash("sha256", $url . serialize($data) . $strip_crlf . $split_crlf);
+        $cache_hash = str_pad(dec2string(string2dec($cache_hash, 16), 62), 43, '0', STR_PAD_LEFT);
+        if (($from_cache = isCacheReady($cache_path, $cache_prefix, $cache_hash, 86400*365, $content)) === TRUE) {
+            return true;
+        }
     }
     $host = parseUrl($url);
     $ua = get_user_agent($host['host']);
@@ -170,8 +175,8 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
         CURLOPT_RETURNTRANSFER => true,         // return web page
         CURLOPT_HEADER         => false,        // don't return headers
         CURLOPT_FOLLOWLOCATION => true,         // follow redirects
-	CURLOPT_ENCODING       => "gzip,deflate",	// handle all encodings
-        CURLOPT_USERAGENT      => $ua,		// who am i
+        CURLOPT_ENCODING       => "gzip,deflate",// handle all encodings
+        CURLOPT_USERAGENT      => $ua,          // who am i
         CURLOPT_AUTOREFERER    => true,         // set referer on redirect
         CURLOPT_CONNECTTIMEOUT => 120,          // timeout on connect
         CURLOPT_TIMEOUT        => 120,          // timeout on response
@@ -181,15 +186,15 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
         CURLOPT_VERBOSE        => ($debug?1:0), //
     );
     if (isset($data['httpheader'])) {
-	$options[CURLOPT_HTTPHEADER] = $data['httpheader'];
+        $options[CURLOPT_HTTPHEADER] = $data['httpheader'];
     }
     if (isset($data['poststring'])) {
-	$options[CURLOPT_POST] = substr_count($data['poststring'], "&") + 1; // i am sending post data
-    	$options[CURLOPT_POSTFIELDS] = $data['poststring']; // this are my post vars
+        $options[CURLOPT_POST] = substr_count($data['poststring'], "&") + 1; // i am sending post data
+        $options[CURLOPT_POSTFIELDS] = $data['poststring']; // this are my post vars
     }
     if (getenv('http_proxy')!="") {
-	$options[CURLOPT_PROXY] = getenv('http_proxy');
-	// $options[CURLOPT_PROXYTYPE] = CURLPROXY_SOCKS5;
+        $options[CURLOPT_PROXY] = getenv('http_proxy');
+        // $options[CURLOPT_PROXYTYPE] = CURLPROXY_SOCKS5;
     }
     $ch      = curl_init($url);
     curl_setopt_array($ch,$options);
@@ -205,11 +210,11 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
     //$content = ForceUTF8\Encoding::toUTF8($content);
 
     if ( 0 == strlen($content) )
-	return false;
+        return false;
 
     if ($split_crlf) { // result becomes array
         $content = preg_split("/[\r\n|\n\r|\n]/", $content, NULL, PREG_SPLIT_NO_EMPTY);
-    } 
+    }
     if ($strip_crlf) {
         $content = str_replace(array("\r\n", "\n\r", "\n"), array("","",""), $content);
     }
@@ -217,12 +222,11 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
 
     if ( $err == 0 ) {
         if ($cache) {
-	    fillCache($cache_path, $cache_prefix, $cache_hash, $content);
-	}
+            fillCache($cache_path, $cache_prefix, $cache_hash, $content);
+        }
     } else {
-	return false;
+        return false;
     }
-    
-    return true;
-} 
 
+    return true;
+}
