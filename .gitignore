@@ -1,4 +1,7 @@
 php-error.log
 php-error_devel.log
-config.inc.php
-
+/src/Ifsnop/config.inc.php
+/.project
+/composer.phar
+/.settings
+/vendor/

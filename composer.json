@@ -1,0 +1,14 @@
+{
+    "name": "ifsnop/lpsf",
+    "description": "Several php utilities to scrap sites",
+    "license": "GPL3",
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.1.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Ifsnop\\": "src/"
+        }
+    }
+}
