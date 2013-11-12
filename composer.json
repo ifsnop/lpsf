@@ -4,7 +4,8 @@
     "license": "GPL3",
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.1.0"
+        "php": ">=5.1.0",
+        "neitanod/forceutf8" : "dev-master"
     },
     "autoload": {
         "psr-0": {
