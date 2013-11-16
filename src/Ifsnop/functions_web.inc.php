@@ -158,6 +158,10 @@ function extractDomain($url)
 function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf = false, $data = array(), $cache = true, $debug = false, &$from_cache) {
     global $lpsf;
 
+    if ( !function_exists(curl_exec) ) {
+        throw new Exception("curl support is not installed", 1);
+    }
+
     if ($cache) {
         $cache_content = "";
         $cache_path = "./cache/";
@@ -211,16 +215,16 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
     if ( 0 == strlen($content) )
         return false;
 
-    if ($split_crlf) { // result becomes array
+    if ( $split_crlf ) { // result becomes array
         $content = preg_split("/[\r\n|\n\r|\n]/", $content, NULL, PREG_SPLIT_NO_EMPTY);
     }
-    if ($strip_crlf) {
+    if ( $strip_crlf ) {
         $content = str_replace(array("\r\n", "\n\r", "\n"), array("","",""), $content);
     }
     if (!is_array($content)) $content = array($content);
 
     if ( $err == 0 ) {
-        if ($cache) {
+        if ( $cache ) {
             fillCache($cache_path, $cache_prefix, $cache_hash, $content);
         }
     } else {
