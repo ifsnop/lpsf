@@ -8,8 +8,7 @@
         "neitanod/forceutf8" : "dev-master"
     },
     "autoload": {
-        "psr-0": {
-            "Ifsnop\\": "src/"
-        }
+        "psr-4": {"Ifsnop\\": "src/Ifsnop/"}
     }
+
 }
