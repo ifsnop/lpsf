@@ -233,3 +233,35 @@ function downloadContentMemory($url, &$content, $strip_crlf = false, $split_crlf
 
     return true;
 }
+
+function url_origin($s=null, $use_forwarded_host=false)
+{
+    $port = ""; $host = "localhost";
+
+    if (is_null($s))
+        $s = $_SERVER;
+
+    $ssl = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true:false;
+    $sp = (!isset($s['SERVER_PROTOCOL']) ? "http/1.0" : strtolower($s['SERVER_PROTOCOL']));
+    $protocol = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
+    if (isset($s['SERVER_PORT'])) {
+        $port = $s['SERVER_PORT'];
+        $port = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
+    }
+    if (isset($s['HTTP_HOST'])) {
+        $host = ($use_forwarded_host && isset($s['HTTP_X_FORWARDED_HOST'])) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
+        $host = isset($host) ? $host : $s['SERVER_NAME'] . $port;
+    }
+    return $protocol . '://' . $host;
+}
+
+function full_url($s=null, $use_forwarded_host=false)
+{
+    if (is_null($s))
+        $s = $_SERVER;
+
+    $request_uri = (isset($s) && isset($s['REQUEST_URI']) ? $s['REQUEST_URI'] : "");
+    return url_origin($s, $use_forwarded_host) . $request_uri;
+}
+
+define('URI', url_origin());

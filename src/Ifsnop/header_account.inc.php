@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define('ERROR_LOG', DIR_HOME . "/php-error_devel.log");
+define('ERROR_LOG', HOME . "/logs/php-error_devel.log");
 
 function Bnumber() {
     $res = debug_backtrace();

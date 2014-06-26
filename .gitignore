@@ -3,5 +3,6 @@ php-error_devel.log
 /src/Ifsnop/config.inc.php
 /.project
 /composer.phar
+/composer.lock
 /.settings
 /vendor/

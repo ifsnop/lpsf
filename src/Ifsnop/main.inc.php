@@ -24,6 +24,7 @@ define('DIR_HOME', dirname(__FILE__));
 #define('FONTS_HOME', DIR_HOME . "/fonts");
 
 include_once(DIR_HOME . '/config.inc.php');
+
 include_once(DIR_HOME . '/header_account.inc.php');
 include_once(DIR_HOME . '/functions.inc.php');
 include_once(DIR_HOME . '/functions_log.inc.php');
@@ -31,6 +32,7 @@ include_once(DIR_HOME . '/functions_db.inc.php');
 include_once(DIR_HOME . '/functions_str.inc.php');
 include_once(DIR_HOME . '/functions_web.inc.php');
 include_once(DIR_HOME . '/mod_cache.inc.php');
+
 
 if (isset($_SERVER['HTTP_HOST'])) {
     define('URL_HOME', "https://" . $_SERVER['HTTP_HOST'] . "/");

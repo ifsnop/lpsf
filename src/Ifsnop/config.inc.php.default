@@ -17,6 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+define('HOME', realpath(dirname(__file__) . '/../../../../../'));
+
+// defined in function_web.inc.php
+// define('URI', url_origin());
+
 $lpsf = array(
     'config' => array(
         'timer_db' => 0,
