@@ -250,3 +250,21 @@ function code2utf($num)
 
     return '';
 }
+
+/**
+ * Format bytes to display it using smart suffix (b, kb, mb, gb, tb or pb)
+ *
+ * Returns true if both arrays have the same elements,
+ * false otherwise or if one parameter is not an array.
+ *
+ * @version     20140705120000
+ * @author      Diego Torres <diego.torres@gmail.com>
+ * @link        https://github.com/ifsnop/lpsf
+ * @param       int $size    Number to format
+ * @return      string       Formatted string
+ */
+function display_bytes($size)
+{
+    $unit=array('b','kb','mb','gb','tb','pb');
+    return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
+}

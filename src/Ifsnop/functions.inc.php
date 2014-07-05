@@ -704,7 +704,7 @@ function test_insert_at_top() {
  * @version     20130612232800
  * @author      Diego Torres <diego.torres@gmail.com>
  * @link        https://github.com/rapid2k1/lpsf
- * @param       array $a        First array to compere
+ * @param       array $a        First array to compare
  * @param       array $b        Second array to compare
  * @return      bool            True if equal, false if not
  */
