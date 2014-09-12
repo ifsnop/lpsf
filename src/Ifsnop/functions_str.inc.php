@@ -268,3 +268,55 @@ function display_bytes($size)
     $unit=array('b','kb','mb','gb','tb','pb');
     return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
 }
+
+
+/*
+$teststr = "";
+for ( $i = 0; $i <= 255; $i++ )
+  $teststr .= chr( $i );
+
+$teststr .= "blah";
+
+print makehex( $teststr );
+*/
+/* outputs
+  00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  : ................
+  10 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F  : ................
+  20 21 22 23 24 25 26 27 28 29 2A 2B 2C 2D 2E 2F  :  !"#$%&'()*+,-./
+  30 31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F  : 0123456789:;<=>?
+  40 41 42 43 44 45 46 47 48 49 4A 4B 4C 4D 4E 4F  : @ABCDEFGHIJKLMNO
+  50 51 52 53 54 55 56 57 58 59 5A 5B 5C 5D 5E 5F  : PQRSTUVWXYZ[\]^_
+  60 61 62 63 64 65 66 67 68 69 6A 6B 6C 6D 6E 6F  : `abcdefghijklmno
+*etc*, there was more but I think you get the idea
+*/
+
+/**
+ * Function that outputs binary data in a readable form. 
+ * Useful for debugging. "Beefed up" version of what Aiden posted below.
+ * http://titanic.fauser.edu/php/function.bin2hex.php.htm
+ *
+ * @version     20140912 225600
+ * @author      Diego Torres <diego.torres@gmail.com>
+ * @link        https://github.com/ifsnop/lpsf
+ * @param       string $data Number to format
+ * @return      string       Formatted string
+ */
+function makehex( $data )
+{
+  $rawdat = $decdat = "";
+  $return = "<pre>";
+  $lines = array();
+  while ( $i * 16 < strlen( $data ) )
+   $lines[] = substr( $data, 16 * $i++, 16 );
+  foreach ( $lines as $line )
+  {
+   for ( $i = 0; $i < strlen( $line ); $i++ )
+   {
+     $rawdat .= sprintf( "%02X ", ord( $line{ $i } ) );
+     $decdat .= ( ord( $line{ $i } ) >= 32 ? $line{ $i } : "." );
+   }
+   $return .= sprintf( "%-48s : %s\n", $rawdat, $decdat );
+   $rawdat = $decdat = "";
+  }
+  return $return . "</pre>";
+}
